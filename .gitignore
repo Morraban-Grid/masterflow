@@ -1,0 +1,15 @@
+# Entorno virtual
+venv/
+
+# Archivos de configuración de entorno
+.env
+
+# Datos (simulación de S3)
+data_lake/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Mage temporales
+masterflow_project/pipelines/*/.variables/

@@ -1,6 +1,15 @@
-prefect
-pandas
-psycopg2-binary
-python-dotenv
-requests
-sqlalchemy
+# Orquestación de workflows (ETL)
+prefect==2.*
+
+# Manipulación y transformacación de datos
+pandas>=2.0
+
+# Conexión y abstracción de bases de datos
+sqlalchemy>=2.0
+psycopg2-binary>=2.9
+
+# Manejo de variables de entorno
+python-dotenv>=1.0
+
+# Testing
+pytest>=7.0

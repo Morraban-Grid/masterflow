@@ -1,0 +1,55 @@
+MASTERFLOW/
+│
+├── README.md
+├── requirements.txt
+├── .env
+├── .gitignore
+│
+├── logs/
+│
+├── src/
+│   └── masterflow/
+│       ├── __init__.py
+│
+│       ├── core/                    # Núcleo ETL (abstracto)
+│       │   ├── __init__.py
+│       │   ├── extractor.py         # Contrato de extracción
+│       │   ├── transformer.py       # Contrato de transformación
+│       │   ├── loader.py            # Contrato de carga
+│       │   └── pipeline.py          # Orquestación lógica
+│
+│       ├── config/
+│       │   ├── __init__.py
+│       │   └── settings.py          # Variables globales
+│
+│       ├── connections/
+│       │   ├── __init__.py
+│       │   └── postgres.py          # Conexión reutilizable a PostgreSQL
+│
+│       ├── extractors/
+│       │   ├── __init__.py
+│       │   └── retail_db_extractor.py
+│       │       # Lee desde retail_raw.transactions_raw
+│
+│       ├── transformers/
+│       │   ├── __init__.py
+│       │   └── transactions_transformer.py
+│       │       # Limpieza, tipos, reglas de negocio
+│
+│       ├── loaders/
+│       │   ├── __init__.py
+│       │   └── masterflow_db_loader.py
+│       │       # Escribe en masterflow_db
+│
+│       ├── flows/
+│       │   ├── __init__.py
+│       │   └── retail_transactions_flow.py
+│       │       # Prefect flow (solo orquesta)
+│
+│       └── utils/
+│           ├── __init__.py
+│           └── logging.py
+│
+└── tests/
+    ├── __init__.py
+    └── test_transactions_transformer.py

@@ -75,6 +75,6 @@ class MasterflowLoader(Loader): # Se trata de una clase que hereda de Loader
             method="multi"
         )
 
-
+    
 
 

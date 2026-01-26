@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from core.transformer import Transformer # Importa la clase base Transformer
+from masterflow.core.transformer import Transformer # Importa la clase base Transformer
 
 class TransactionsTransformer(Transformer):
     # Tranformer encargado de limpiar, tipar y aplicar reglas de negocio sobre
@@ -22,6 +22,7 @@ class TransactionsTransformer(Transformer):
 
         return df
     
+    # Normalización 
     @staticmethod
     def _normalize_column_names(df: pd.DataFrame) -> pd.DataFrame:
         # Normaliza los nombres de las columnas para evitar inconsistencias:
@@ -42,10 +43,11 @@ class TransactionsTransformer(Transformer):
     @staticmethod
     def _convert_data_types(df: pd.DataFrame) -> pd.DataFrame:
         # Convierte las columnas a los tipos de datos correctos
-        df["transaction_date"] = pd.to_datetime(
-            df["transaction_date"],
-            errors="coerce"
-        )
+        if "transaction_date" in df.columns:
+            df["transaction_date"] = pd.to_datetime(
+                df["transaction_date"],
+                errors="coerce"
+            )
 
         numeric_columns = [
             "quantity",
@@ -55,7 +57,8 @@ class TransactionsTransformer(Transformer):
         ]
 
         for column in numeric_columns:
-            df[column] = pd.to_numeric(df[column], errors="coerce")
+            if column in df.columns:
+                df[column] = pd.to_numeric(df[column], errors="coerce")
 
         return df
     
@@ -64,17 +67,21 @@ class TransactionsTransformer(Transformer):
         # Aplica reglas de negocio definidas para las transacciones financieras.
 
         # Regla 1: El descuento debe estar entre 0 y 100
-        invalid_discount_mask = (
-            (df["discount_applied"]<0) |
-            (df["discount_applied"]>100)
-        )
+        if "discount_applied" in df.columns:
+            invalid_discount_mask = (
+                (df["discount_applied"]<0) |
+                (df["discount_applied"]>100)
+            )
 
-        df.loc[invalid_discount_mask, "discount_applied"] = np.nan
+            df.loc[invalid_discount_mask, "discount_applied"] = np.nan
 
+        # Recalcular total solo si existen columnas necesarias
         # Regla 2: Recalcular el total_amount
-        df["calculated_total_amount"] = (
-            df["quantity"] * df["price"]
-        ) * (1 - df["discount_applied"]/100)
+        required_columns = {"quantity", "price", "discount_applied"}
+        if required_columns.issubset(df.columns):
+            df["calculated_total_amount"] = (
+                df["quantity"] * df["price"]
+            ) * (1 - df["discount_applied"]/100)
 
         return df
     
@@ -82,8 +89,8 @@ class TransactionsTransformer(Transformer):
     def _remove_invalid_records(df: pd.DataFrame) -> pd.DataFrame:
         # Elimina registros que no cumplen criterios mínimos de calidad
 
-        df = df.dropna(
-            subset=[
+        required_for_dropna = [
+            col for col in [
                 "customer_id",
                 "product_id",
                 "transaction_date",
@@ -91,10 +98,17 @@ class TransactionsTransformer(Transformer):
                 "price",
                 "calculated_total_amount",
             ]
-        )
+            if col in df.columns
+        ]
 
-        df = df[df["quantity"]>0]
-        df = df[df["price"]>0]
+        if required_for_dropna:
+            df = df.dropna(subset=required_for_dropna)
+
+        if "quantity" in df.columns:
+            df = df[df["quantity"]>0]
+
+        if "price" in df.columns:
+            df = df[df["price"]>0]
 
         return df 
 

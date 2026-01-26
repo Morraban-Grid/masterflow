@@ -3,9 +3,9 @@ from prefect.tasks import task_input_hash # Importa el hash de entrada de tareas
 from datetime import timedelta # Importa timedata para definir duraciones
 import pandas as pd
 
-from extractors.retail_db_extractor import RetailDBExtractor # Importa el extractor de la base de datos retail
-from transformers.transactions_transformer import TransactionsTransformer # Importa el transformador de transacciones
-from loaders.masterflow_db_loader import MasterflowDBLoader # Importa el cargador de la base de datos masterflow
+from masterflow.extractors.retail_db_extractor import RetailDBExtractor # Importa el extractor de la base de datos retail
+from masterflow.transformers.transactions_transformer import TransactionsTransformer # Importa el transformador de transacciones
+from masterflow.loaders.masterflow_db_loader import MasterflowDBLoader # Importa el cargador de la base de datos masterflow
 
 @task( # Decorador de tarea de Prefect con configuración de caché
     retries=3, # Significa que si la tarea falla, se reintentará hasta 3 veces antes de marcarse como fallida

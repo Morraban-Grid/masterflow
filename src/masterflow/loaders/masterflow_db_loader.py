@@ -2,9 +2,9 @@ import pandas as pd
 from sqlalchemy import text # text es una función para escribir consultas SQL en SQLAlchemy
 from sqlalchemy.engine import Engine # Importamos la clase Engine para tipar el parámetro de la función
 
-from core.loader import Loader # Importamos la clase Loader base
-from connections.postgres import get_masterflow_engine # Importamos la función para obtener la conexión a la base de datos a la cual vamos a cargar
-from config.settings import DatabaseSettings # Importamos la clase de configuración de la base de datos
+from masterflow.core.loader import Loader # Importamos la clase Loader base
+from masterflow.connections.postgres import get_masterflow_engine # Importamos la función para obtener la conexión a la base de datos a la cual vamos a cargar
+from masterflow.config.settings import DatabaseSettings # Importamos la clase de configuración de la base de datos
 
 class MasterflowLoader(Loader): # Se trata de una clase que hereda de Loader 
     # Clase encargada de cargar datos limpios en la base de datos de destino (masterflow_db)

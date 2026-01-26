@@ -2,12 +2,12 @@ import pandas as pd
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 from abc import abstractmethod
-from config.settings import DatabaseSettings
-from connections.postgres import get_retail_engine
+from masterflow.config.settings import DatabaseSettings
+from masterflow.connections.postgres import get_retail_engine
 
-from core.extractor import Extractor # Importamos la clase Extractor
-from connections.postgres import getpostgres_engine # Importamos el método para obtener la connexión a Postgres
-from config.settings import (
+from masterflow.core.extractor import Extractor # Importamos la clase Extractor
+from masterflow.connections.postgres import getpostgres_engine # Importamos el método para obtener la connexión a Postgres
+from masterflow.config.settings import (
     SOURCE_DB_NAME,
     SOURCE_SCHEMA,
     SOURCE_TABLE,

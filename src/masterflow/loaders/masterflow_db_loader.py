@@ -6,7 +6,7 @@ from masterflow.core.loader import Loader # Importamos la clase Loader base
 from masterflow.connections.postgres import get_masterflow_engine # Importamos la función para obtener la conexión a la base de datos a la cual vamos a cargar
 from masterflow.config.settings import DatabaseSettings # Importamos la clase de configuración de la base de datos
 
-class MasterflowLoader(Loader): # Se trata de una clase que hereda de Loader 
+class MasterflowDBLoader(Loader): # Se trata de una clase que hereda de Loader 
     # Clase encargada de cargar datos limpios en la base de datos de destino (masterflow_db)
 
     def __init__(self, mode: str = "truncate_insert") -> None:

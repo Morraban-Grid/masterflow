@@ -297,44 +297,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # Elasticsearch - Log Storage
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.0
-    container_name: medallion-elasticsearch
-    environment:
-      discovery.type: single-node
-      xpack.security.enabled: "false"
-      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
-    ports:
-      - "9200:9200"
-    networks:
-      - medallion-network
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s http://localhost:9200 >/dev/null || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Kibana - Log Visualization
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.10.0
-    container_name: medallion-kibana
-    environment:
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-    ports:
-      - "5601:5601"
-    networks:
-      - medallion-network
-    depends_on:
-      - elasticsearch
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s http://localhost:5601/api/status >/dev/null || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
 networks:
   medallion-network:
     driver: bridge
@@ -355,4 +317,3 @@ volumes:
   spark_worker2_logs:
   prometheus_data:
   grafana_data:
-  elasticsearch_data:

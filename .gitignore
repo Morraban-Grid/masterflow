@@ -3,6 +3,8 @@ venv/
 
 # Archivos de configuración de entorno
 .env
+.env.local
+.env.*.local
 
 # Datos (simulación de S3)
 data_lake/
@@ -13,3 +15,38 @@ __pycache__/
 
 # Mage temporales
 masterflow_project/pipelines/*/.variables/
+
+# IDE (development tool)
+.kiro/
+wsl.localhost/
+
+# Docker volumes (local development)
+postgres_data/
+minio_data/
+kafka*_data/
+spark_*_data/
+spark_*_logs/
+prometheus_data/
+grafana_data/
+elasticsearch_data/
+zookeeper_data/
+zookeeper_logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp

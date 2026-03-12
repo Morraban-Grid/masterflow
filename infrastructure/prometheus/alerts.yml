@@ -1,0 +1,110 @@
+groups:
+  - name: medallion_alerts
+    interval: 30s
+    rules:
+      # Kafka Alerts
+      - alert: KafkaBrokerDown
+        expr: up{job="kafka"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: kafka
+        annotations:
+          summary: "Kafka broker {{ $labels.instance }} is down"
+          description: "Kafka broker {{ $labels.instance }} has been down for more than 2 minutes"
+
+      - alert: KafkaHighErrorRate
+        expr: rate(kafka_server_request_total{request_type="Produce",error_code!="0"}[5m]) > 0.01
+        for: 5m
+        labels:
+          severity: warning
+          component: kafka
+        annotations:
+          summary: "High error rate in Kafka producer"
+          description: "Kafka producer error rate is above 1% for the last 5 minutes"
+
+      # Spark Alerts
+      - alert: SparkMasterDown
+        expr: up{job="spark-master"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: spark
+        annotations:
+          summary: "Spark Master is down"
+          description: "Spark Master has been down for more than 2 minutes"
+
+      - alert: SparkWorkerDown
+        expr: up{job="spark-workers"} == 0
+        for: 2m
+        labels:
+          severity: warning
+          component: spark
+        annotations:
+          summary: "Spark Worker {{ $labels.instance }} is down"
+          description: "Spark Worker {{ $labels.instance }} has been down for more than 2 minutes"
+
+      # PostgreSQL Alerts
+      - alert: PostgreSQLDown
+        expr: up{job="postgres"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: postgres
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL database has been down for more than 2 minutes"
+
+      # MinIO Alerts
+      - alert: MinIODown
+        expr: up{job="minio"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: minio
+        annotations:
+          summary: "MinIO is down"
+          description: "MinIO S3-compatible storage has been down for more than 2 minutes"
+
+      # Generic Service Alerts
+      - alert: ServiceDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.job }} on {{ $labels.instance }} is down"
+          description: "Service {{ $labels.job }} has been down for more than 2 minutes"
+
+      # High CPU Usage
+      - alert: HighCPUUsage
+        expr: (1 - avg(rate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance)) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 80% on {{ $labels.instance }}"
+
+      # High Memory Usage
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is above 85% on {{ $labels.instance }}"
+
+      # Disk Space Alert
+      - alert: LowDiskSpace
+        expr: (node_filesystem_avail_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs|vfat"} / node_filesystem_size_bytes) < 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Disk space is below 10% on {{ $labels.device }} ({{ $labels.instance }})"

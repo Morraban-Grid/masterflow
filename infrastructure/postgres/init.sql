@@ -10,9 +10,9 @@ CREATE SCHEMA IF NOT EXISTS monitoring;
 -- Set search path
 SET search_path TO medallion, lineage, access_control, monitoring, public;
 
--- ============================================================================
+-- ==================================================
 -- MEDALLION SCHEMA - Schema Registry and Core Metadata
--- ============================================================================
+-- ==================================================
 
 CREATE TABLE IF NOT EXISTS medallion.schemas (
     id SERIAL PRIMARY KEY,
@@ -45,9 +45,9 @@ INSERT INTO medallion.data_layers (layer_name, description, retention_days) VALU
     ('gold', 'Business-ready aggregated data layer', NULL)
 ON CONFLICT (layer_name) DO NOTHING;
 
--- ============================================================================
+-- ==================================================
 -- LINEAGE SCHEMA - Data Lineage and Provenance Tracking
--- ============================================================================
+-- ==================================================
 
 CREATE TABLE IF NOT EXISTS lineage.lineage_records (
     id SERIAL PRIMARY KEY,
@@ -99,9 +99,9 @@ CREATE INDEX IF NOT EXISTS idx_quality_check_type ON lineage.quality_check_resul
 CREATE INDEX IF NOT EXISTS idx_quality_passed ON lineage.quality_check_results(passed);
 CREATE INDEX IF NOT EXISTS idx_quality_created_at ON lineage.quality_check_results(created_at);
 
--- ============================================================================
+-- ==================================================
 -- ACCESS_CONTROL SCHEMA - Access Control and Security
--- ============================================================================
+-- ==================================================
 
 CREATE TABLE IF NOT EXISTS access_control.access_policies (
     id SERIAL PRIMARY KEY,
@@ -134,9 +134,9 @@ CREATE INDEX IF NOT EXISTS idx_audit_dataset_timestamp ON access_control.access_
 CREATE INDEX IF NOT EXISTS idx_audit_allowed ON access_control.access_audit_log(allowed);
 CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON access_control.access_audit_log(timestamp);
 
--- ============================================================================
+-- ==================================================
 -- MONITORING SCHEMA - Monitoring and Metrics
--- ============================================================================
+-- ==================================================
 
 CREATE TABLE IF NOT EXISTS monitoring.pipeline_metrics (
     id SERIAL PRIMARY KEY,
@@ -165,14 +165,15 @@ CREATE INDEX IF NOT EXISTS idx_alerts_severity ON monitoring.pipeline_alerts(sev
 CREATE INDEX IF NOT EXISTS idx_alerts_created_at ON monitoring.pipeline_alerts(created_at);
 CREATE INDEX IF NOT EXISTS idx_alerts_resolved_at ON monitoring.pipeline_alerts(resolved_at);
 
--- ============================================================================
+-- ==================================================
 -- GRANT PERMISSIONS
--- ============================================================================
+-- ==================================================
 
--- Grant permissions to medallion_user
-GRANT USAGE ON SCHEMA medallion, lineage, access_control, monitoring TO medallion_user;
-GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA medallion TO medallion_user;
-GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA lineage TO medallion_user;
-GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA access_control TO medallion_user;
-GRANT SELECT, INSERT ON ALL TABLES IN SCHEMA monitoring TO medallion_user;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA medallion, lineage, access_control, monitoring TO medallion_user;
+-- Grant permissions to medallion_user_mf_etl
+-- Note: medallion_user_mf_etl is created by POSTGRES_USER env var in docker-compose
+GRANT USAGE ON SCHEMA medallion, lineage, access_control, monitoring TO medallion_user_mf_etl;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA medallion TO medallion_user_mf_etl;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA lineage TO medallion_user_mf_etl;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA access_control TO medallion_user_mf_etl;
+GRANT SELECT, INSERT ON ALL TABLES IN SCHEMA monitoring TO medallion_user_mf_etl;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA medallion, lineage, access_control, monitoring TO medallion_user_mf_etl;

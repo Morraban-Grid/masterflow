@@ -21,9 +21,9 @@ check_service() {
     local service=$1
     local port=$2
     local endpoint=$3
-    
+
     echo -n "Checking $service... "
-    
+
     if curl -s -f "http://localhost:$port$endpoint" > /dev/null 2>&1; then
         echo -e "${GREEN}✓ OK${NC}"
         return 0
@@ -36,9 +36,9 @@ check_service() {
 # Function to check Docker container
 check_container() {
     local container=$1
-    
+
     echo -n "Checking container $container... "
-    
+
     if docker ps --filter "name=$container" --filter "status=running" | grep -q "$container"; then
         echo -e "${GREEN}✓ Running${NC}"
         return 0
@@ -70,18 +70,11 @@ echo ""
 echo "Checking containers..."
 containers=(
     "medallion-zookeeper"
-    "medallion-kafka-1"
-    "medallion-kafka-2"
-    "medallion-kafka-3"
+    "medallion-kafka"
     "medallion-postgres"
     "medallion-minio"
-    "medallion-spark-master"
-    "medallion-spark-worker-1"
-    "medallion-spark-worker-2"
     "medallion-prometheus"
     "medallion-grafana"
-    "medallion-elasticsearch"
-    "medallion-kibana"
 )
 
 failed_containers=0
@@ -97,10 +90,7 @@ echo "Checking services..."
 services=(
     "Prometheus:9090:/-/healthy"
     "Grafana:3000:/api/health"
-    "Elasticsearch:9200:/"
-    "Kibana:5601:/api/status"
     "MinIO:9000:/minio/health/live"
-    "Spark Master:8080:/"
 )
 
 failed_services=0
@@ -114,20 +104,10 @@ echo ""
 
 # Check PostgreSQL
 echo "Checking PostgreSQL..."
-if docker-compose exec -T postgres pg_isready -U medallion_user > /dev/null 2>&1; then
+if docker-compose exec -T postgres pg_isready -U medallion_user_mf_etl > /dev/null 2>&1; then
     echo -e "${GREEN}✓ PostgreSQL is ready${NC}"
 else
     echo -e "${RED}✗ PostgreSQL is not ready${NC}"
-    ((failed_services++))
-fi
-echo ""
-
-# Check Kafka
-echo "Checking Kafka..."
-if docker-compose exec -T kafka-1 kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1; then
-    echo -e "${GREEN}✓ Kafka is ready${NC}"
-else
-    echo -e "${RED}✗ Kafka is not ready${NC}"
     ((failed_services++))
 fi
 echo ""
